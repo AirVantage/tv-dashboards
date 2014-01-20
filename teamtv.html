@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+        <title>Platform TV</title>
+        <style>
+            * { margin: 0; padding: 0 }
+            html,body { height: 100%; width: 100%; overflow: hidden }
+            table { height: 100%; width: 100%; table-layout: static; border-collapse: collapse }
+            iframe { height: 100%; width: 100% }
+            .header { border-bottom: 1px solid #000 }
+            .content { height: 100% }
+        </style>
+    </head>
+<body>
+    <script type=text/javascript>
+        window.onload = myFunction();
+    
+        function myFunction() {
+            var i = 0;
+            var uiDashboardDisplayed = false;
+            var backendDashboardDisplayed = false;
+            var frameRefreshInterval = setInterval(
+                function() {
+                    var now = new Date();
+                    console.log(now.getHours() + " - " + now.getMinutes());
+                    if ((now.getHours() == 10) && (now.getMinutes() >= 0) && (now.getMinutes() < 15) && (uiDashboardDisplayed == false)) {
+                        uiDashboardDisplayed = true;
+                        //document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/burndown/?team=UI";
+                        document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_bugs.html?blacklist=no-ui";
+                        //document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/TeamMessages2.html";
+                    }
+                    if ((uiDashboardDisplayed == true) && (now.getMinutes() >= 15)) {
+                        uiDashboardDisplayed = false;
+                    }
+                    if ((now.getHours() == 10) && (now.getMinutes() >= 30) && (now.getMinutes() < 45) && (backendDashboardDisplayed == false)) {
+                        backendDashboardDisplayed = true;
+                        //document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/burndown/?team=Backend";
+                        document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_bugs.html?blacklist=no-ui";
+                        //document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/TeamMessages.html";
+                    }
+                    if ((backendDashboardDisplayed == true) && (now.getMinutes() >= 45)) {
+                        backendDashboardDisplayed = false;
+                    }
+                    if ((uiDashboardDisplayed == false) && (backendDashboardDisplayed == false)) {
+                        switch (i) {
+                        case 0: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_bugs.html?blacklist=no-ui"; break;
+                        case 1: document.getElementsByName("myframe")[0].src = "http://zahia/dashboard/servers-state.html"; break;
+                        case 2: document.getElementsByName("myframe")[0].src = "http://zahia/dashboard/servers-state-branch.html"; break;
+                        case 3: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/Milestones.html"; break;
+                        case 4: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/sonar_charts.html"; break;
+                        case 5: document.getElementsByName("myframe")[0].src = "https://issues.sierrawireless.com/secure/RapidBoard.jspa?rapidView=10&view=reporting&chart=cumulativeFlowDiagram&swimlane=10&column=28&column=29&column=30"; break;
+                        case 6: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_dailies.html"; break;
+                        default: break;
+                        }
+                        i >= 6 ? i = 0 : i++;
+                    }
+                }, 15000)
+        }
+    </script>
+
+    <table>
+        <tr><td class="content"><iframe name="myframe" src="" frameborder="0"></iframe></td></tr>
+    </table>
+</body>
+</html>

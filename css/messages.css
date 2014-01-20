@@ -1,0 +1,70 @@
+h1,h2,h3, h4 {
+	font-variant:normal;
+}
+h1.merge-ok
+{
+	FONT-WEIGHT: bold; 
+	FONT-SIZE: 13em;
+	COLOR: #e53b30;
+	FONT-FAMILY: Verdana, sans-serif;
+	padding: 70px 0px;
+	margin: 0px;
+	text-align: center;
+}
+
+h1.merge-ko
+{
+	FONT-WEIGHT: bold; 
+	FONT-SIZE: 19em;
+	COLOR: #e53b30;
+	FONT-FAMILY: Verdana, sans-serif;
+	padding: 10px 0px;
+	margin: 0px;
+	text-align: center;
+}
+
+h1
+{
+	COLOR: #e53b30;
+	FONT-WEIGHT: bold; 
+	FONT-SIZE: 7em;
+	FONT-FAMILY: Verdana, sans-serif;
+	margin: 0px;
+	text-align: center;
+}
+
+dl
+{
+	FONT-WEIGHT: bold; 
+	FONT-SIZE: 5em;
+	FONT-FAMILY: Verdana, sans-serif;
+	margin: auto;
+	width: 900px;
+}
+
+dt {
+	padding: 15px 0px 0px 35px;
+	color: white;
+	FONT-SIZE: 73px;
+}
+
+dd {
+	FONT-SIZE: 73px;
+	text-align: center;
+	COLOR: rgb(100, 116, 127);
+}
+
+a {
+	FONT-SIZE: 40px;
+	text-align: center;
+	COLOR: rgb(100, 116, 127);
+}
+
+body {
+    background-color: #FFFFFF;
+    background-image: url("../images/sw_av_dashboard_bg2.png");
+    background-repeat: no-repeat;
+    font-family: arial;
+    margin: 0;
+}
+
