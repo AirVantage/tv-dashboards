@@ -5,7 +5,7 @@ Summary
 -------
 
 Theses pages are deployed on the R&D TV
-The main page is teamtv.html that launches other pages cyclically. Two timeslots are dedicated to the display of
+The main page is teamtv.html that launches other pages cyclically. Two timeslots are dedicated to the display of bug counts during UI and API dailies.
 
 Get started
 -----------
