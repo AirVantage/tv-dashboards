@@ -10,15 +10,14 @@
 <meta http-equiv="Refresh" content="60">
 
 <style>
-
 .counts {
     -moz-column-count:2; /* Firefox */
     -webkit-column-count:2; /* Safari and Chrome */
-    column-count:2;
+    /* column-count:2; */
     
     -moz-column-gap:10px; /* Firefox */
     -webkit-column-gap:10px; /* Safari and Chrome */
-    column-gap:10px;
+    /* column-gap:10px; */
 }
 
 .label {
@@ -40,7 +39,6 @@
     font-weight: bold;
     font-size: 68px;
 }
-
 </style>
 
 <title id='pageTitle'>Open bugs count</title>
@@ -49,7 +47,7 @@
 <div class="counts" id="counts"></div>
 
 <script type="text/javascript">
-    function get_query(){
+    function get_query() {
         var url = location.href;
         var qs = url.substring(url.indexOf('?') + 1).split('&');
         for(var i = 0, result = {}; i < qs.length; i++){
@@ -67,18 +65,24 @@
 	
 	$(document).ready(
             function() {
-                $.ajax({
-                    url : jira_url + encodeURI(jql) + suffix_jira,
-                    contentType : "application/json; charset=utf-8",
-                    dataType : "jsonp",
-                    jsonp : "jsonp-callback",
-                    success : displayResults,
-                });
+                $.getJSON(jira_url + encodeURI(jql) + suffix_jira)
+                .done(function( json ) {
+                        console.log( "JSON Data: " + json.users[ 3 ].name );
+                    })
+                .fail(function( jqxhr, textStatus, error ) {
+                        var err = textStatus + ", " + error;
+                        console.log( "Request Failed: " + err );
+                        //, function(result) {
+                        //console.log(result);
+                        //displayResults(result);
+                    });
             });
-			
+	
     function displayResults(result) {
+        console.log(result);
         var counters = new Object();
         $.each(result.issues, function(index, issue) {
+            console.log(issue);
             var priority = issue.fields.priority.name;
             var labels = issue.fields.labels;
             for (var index in labels) {
