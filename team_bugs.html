@@ -25,7 +25,7 @@
     color: white;
     font-family: Verdana, sans-serif;
     font-weight: bold;
-    font-size: 68px;
+    font-size: 50px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -37,7 +37,7 @@
     color: rgb(100, 116, 127);
     font-family: Verdana, sans-serif;
     font-weight: bold;
-    font-size: 68px;
+    font-size: 50px;
 }
 </style>
 
@@ -65,39 +65,31 @@
 	
 	$(document).ready(
             function() {
-                $.getJSON(jira_url + encodeURI(jql) + suffix_jira)
-                .done(function( json ) {
-                        console.log( "JSON Data: " + json.users[ 3 ].name );
-                    })
-                .fail(function( jqxhr, textStatus, error ) {
-                        var err = textStatus + ", " + error;
-                        console.log( "Request Failed: " + err );
-                        //, function(result) {
-                        //console.log(result);
-                        //displayResults(result);
-                    });
+                $.getJSON('http://freyja:8081/~pascal/counters/scripts/counters.json', function(data){
+                	displayResults(data);
+                });
             });
 	
-    function displayResults(result) {
-        console.log(result);
-        var counters = new Object();
-        $.each(result.issues, function(index, issue) {
-            console.log(issue);
-            var priority = issue.fields.priority.name;
-            var labels = issue.fields.labels;
-            for (var index in labels) {
-            	var label = labels[index];
-            	if (label in counters === false) {
-            		counters[label] = new Object();
-            	}
-            	if (priority in counters[label] === false) {
-            		counters[label][priority] = 1;
-            	}
-            	else {
-            		counters[label][priority]++;
-            	}
-            }
-        });
+    function displayResults(counters) {
+        console.log(counters);
+        
+//         $.each(result.issues, function(index, issue) {
+//             console.log(issue);
+//             var priority = issue.fields.priority.name;
+//             var labels = issue.fields.labels;
+//             for (var index in labels) {
+//             	var label = labels[index];
+//             	if (label in counters === false) {
+//             		counters[label] = new Object();
+//             	}
+//             	if (priority in counters[label] === false) {
+//             		counters[label][priority] = 1;
+//             	}
+//             	else {
+//             		counters[label][priority]++;
+//             	}
+//             }
+//         });
         
         var params = get_query();
         var blacklist = [];
@@ -106,26 +98,30 @@
         }
         
         var topContainer = $('#counts');
-        var labels = Object.keys(counters).sort();
+        var labels = Object.keys(counters.labels).sort();
         for (var index in labels) {
         	var label = labels[index];
+        	// TODO: fix bug when a label is blacklisted but non-existent in the list of labels
         	if ($.inArray(label,blacklist) == -1) {
                 var total = 0;
                 var blocker = 0;
                 var critical = 0;
-                for (var priority in counters[label]) {
-                    total += counters[label][priority];
+                for (var priority in counters.labels[label]) {
+                    total += counters.labels[label][priority];
                     if (priority === 'Blocker') {
-                        blocker += counters[label][priority];
+                        blocker += counters.labels[label][priority];
                     }
                     if (priority === 'Critical') {
-                        blocker += counters[label][priority];
+                        blocker += counters.labels[label][priority];
                     }
                 }
                 labelContainer = topContainer.append($('<div class="label" id="' + label + '">' + label + '&nbsp;<span class="total">' + total + ' (<span style="color: #ff0000;">' + blocker + '</span>/<span style="color: #F87217;">' + critical + '</span>)</span></div>'));
         	}
         }
-        $('#title').contents().replaceWith(result.issues.length + ' open bugs');
-        $('#pageTitle').contents().replaceWith(result.issues.length + ' open bugs');
+        for (var priority in counters.total) {
+        	total += counters.total[priority];
+        }
+        $('#title').contents().replaceWith(total + ' open bugs');
+        $('#pageTitle').contents().replaceWith(total + ' open bugs');
     }
 </script>
