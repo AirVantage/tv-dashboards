@@ -27,34 +27,28 @@
                     console.log(now.getHours() + " - " + now.getMinutes());
                     if ((now.getHours() == 10) && (now.getMinutes() >= 0) && (now.getMinutes() < 15) && (uiDashboardDisplayed == false)) {
                         uiDashboardDisplayed = true;
-                        //document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/burndown/?team=UI";
                         document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_bugs.html?blacklist=no-ui";
-                        //document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/TeamMessages2.html";
                     }
                     if ((uiDashboardDisplayed == true) && (now.getMinutes() >= 15)) {
                         uiDashboardDisplayed = false;
                     }
                     if ((now.getHours() == 10) && (now.getMinutes() >= 30) && (now.getMinutes() < 45) && (backendDashboardDisplayed == false)) {
                         backendDashboardDisplayed = true;
-                        //document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/burndown/?team=Backend";
                         document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_bugs.html?blacklist=no-ui";
-                        //document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/TeamMessages.html";
                     }
                     if ((backendDashboardDisplayed == true) && (now.getMinutes() >= 45)) {
                         backendDashboardDisplayed = false;
                     }
                     if ((uiDashboardDisplayed == false) && (backendDashboardDisplayed == false)) {
                         switch (i) {
-                        case 0: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_bugs.html?blacklist=no-ui"; break;
-                        case 1: document.getElementsByName("myframe")[0].src = "http://zahia/dashboard/servers-state.html"; break;
-                        case 2: document.getElementsByName("myframe")[0].src = "http://zahia/dashboard/servers-state-branch.html"; break;
-                        case 3: document.getElementsByName("myframe")[0].src = "https://confluence.sierrawireless.com/display/PDTMKT/AirVantage+M2M+Cloud+Platform+Synchronization"; break;
-                        case 4: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/sonar_charts.html"; break;
-                        case 5: document.getElementsByName("myframe")[0].src = "https://issues.sierrawireless.com/secure/RapidBoard.jspa?rapidView=10&view=reporting&chart=cumulativeFlowDiagram&swimlane=10&column=28&column=29&column=30"; break;
-                        case 6: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_dailies.html"; break;
+                        case 0: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_bugs.html"; break;
+                        case 1: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/sonar_charts.html"; break;
+                        case 2: document.getElementsByName("myframe")[0].src = "https://issues.sierrawireless.com/secure/RapidBoard.jspa?rapidView=10&view=reporting&chart=cumulativeFlowDiagram&swimlane=10&column=28&column=29&column=30"; break;
+                        case 3: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/team_dailies.html"; break;
+                        case 4: document.getElementsByName("myframe")[0].src = "http://zahia.anyware/dashboard/stash_status.html"; break;
                         default: break;
                         }
-                        i >= 6 ? i = 0 : i++;
+                        i >= 4 ? i = 0 : i++;
                     }
                 }, 15000)
         }
