@@ -31,9 +31,9 @@ A valid access to JIRA is requested, thus the login page described below.
 Get started
 -----------
 
-    1. Access http://localhost:8080/login
-    2. Enter valid credentials (i.e. able to access the PLTBUGS JIRA project)
-    3. Rolling pages should shown total bug counts, blocker and critical bug counts and oldest update amongst open bugs
-    4. Counters shoud be updated automatically every N minutes
+1. Access http://localhost:8080/login
+2. Enter valid credentials (i.e. able to access the PLTBUGS JIRA project)
+3. Rolling pages should shown total bug counts, blocker and critical bug counts and oldest update amongst open bugs
+4. Counters shoud be updated automatically every N minutes
 
 One can view detailed counters at http://localhost:8080/counters
