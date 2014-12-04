@@ -10,6 +10,8 @@ RUN pip install --upgrade ipython python-dateutil pytz jira-python jinja2 tornad
 RUN cd /usr/local/share/ca-certificates/ && wget http://ca.anyware-tech.com/anyware-tech.crt
 RUN update-ca-certificates
 
+RUN useradd engtv -U -s /bin/false 
+
 RUN mkdir -p /home/engtv/static/
 RUN mkdir -p /home/engtv/www
 
@@ -19,9 +21,7 @@ COPY www     /home/engtv/www
 ADD scripts/engtv.sh /home/engtv/
 ADD scripts/engtv.py /home/engtv/
 
-# configure bashrc
-RUN echo "# aliases" >> /etc/bash.bashrc
-RUN echo "alias ll=\"ls -l --color\"" >> /etc/bash.bashrc
+USER engtv
 
 EXPOSE 8080
 
