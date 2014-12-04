@@ -4,7 +4,7 @@ MAINTAINER prieux@sierrawireless.com
 RUN apt-get update
 
 RUN apt-get install -y python-pip wget git vim unzip python-dev openssl ca-certificates
-RUN pip install --upgrade ipython python-dateutil pytz jira-python jinja2 tornado apscheduler Flask
+RUN pip install --upgrade ipython python-dateutil pytz jira-python jinja2 tornado Flask
 
 # anyware certificate
 RUN cd /usr/local/share/ca-certificates/ && wget http://ca.anyware-tech.com/anyware-tech.crt
@@ -25,4 +25,4 @@ RUN echo "alias ll=\"ls -l --color\"" >> /etc/bash.bashrc
 
 EXPOSE 8080
 
-#ENTRYPOINT ["/home/engtv/engtv.sh"]
+ENTRYPOINT ["/home/engtv/engtv.sh"]

@@ -1,5 +1,4 @@
 from flask import Flask, request, send_file, jsonify
-from apscheduler.schedulers.background import BackgroundScheduler
 from jira.client import JIRA
 import sys
 from datetime import datetime
@@ -31,6 +30,11 @@ def counters():
     global counter
     return jsonify(counter)
 
+@webserver.route("/update")
+def update():
+    update_counters()
+    return send_file('www/index.html')
+
 def log(message):
     # write to stderr as flask is handling stdout
     sys.stderr.write(str(message) + "\n")
@@ -46,6 +50,7 @@ def update_counters():
         result_count = page_size
         total_open_bugs = 0
         oldest_update = "9999-99-99"
+        oldest_update_key = ""
         start_at = 0
         global counter
         counter['labels'] = {}
@@ -70,9 +75,13 @@ def update_counters():
                 updated = issue.fields.updated
                 if str(updated) < oldest_update:
                     oldest_update = str(updated)
+                    oldest_update_key = issue.key
         counter["open_bugs"] = total_open_bugs
-        diff = datetime.today() - parser.parse(oldest_update[:19])
+        now = datetime.today()
+        diff = now - parser.parse(oldest_update[:19])
+        counter["last_update_of_counters"] = now 
         counter["oldest_update"] = str(diff.days) + " days" 
+        counter["oldest_update_key"] = oldest_update_key 
         counter["open_bugs_blocker_critical"] = 0
         if counter['total'].has_key('Blocker'):
             counter["open_bugs_blocker_critical"] += counter['total']['Blocker']
@@ -81,9 +90,5 @@ def update_counters():
         log("counters updated: %d open bugs" % total_open_bugs)
 
 if __name__ == '__main__':
-    scheduler = BackgroundScheduler()
-    scheduler.start()
-    job = scheduler.add_job(update_counters, 'interval', seconds=30)
-    log(job)
     webserver.config["CACHE_TYPE"] = "null"
     webserver.run(host='0.0.0.0', port=int('8080'))

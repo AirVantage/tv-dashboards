@@ -27,15 +27,16 @@
             <!-- Any section element inside of this container is displayed as a slide -->
             <div class="slides">
                 <section id="open_bugs">
-                    <h1>31</h1>
+                    <h1>0</h1>
                     <h3>Open bugs</h3>
                 </section>
                 <section id="open_bugs_blocker_critical">
-                    <h1>1</h1>
-                    <h3>Blocker or critical bugs</h3>
+                    <h1>0</h1>
+                    <h3>Blocker or critical bug(s)</h3>
                 </section>
                 <section id="oldest_update">
-                    <h1>7 months</h1>
+                    <h1>0 day(s)</h1>
+                    <h2>PLTBUGS-</h2>
                     <h3>Oldest update</h3>
                 </section>
             </div>
@@ -45,6 +46,8 @@
         <script src="static/js/reveal.min.js"></script>
 
         <script>
+            var loop_count = 0;
+
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
             Reveal.initialize({
@@ -65,15 +68,28 @@
                 ]
             });
 
-            Reveal.addEventListener( 'slidechanged', function( event ) {
+            Reveal.addEventListener('slidechanged', function(event) {
+                loop_count++;
+                // update every 60 loops of 5000 ms = every 5 minutes
+                if (loop_count % 60 === 0) {
+                    // console.log("slide changed, no update"); 
+                    $.ajax({
+                        cache: false,
+                        url: '/update'
+                    });
+                    loop_count = 0;
+                    return;
+                }
+                // console.log("slide changed, update needed"); 
                 // event.previousSlide, event.currentSlide, event.indexh, event.indexv
-                //console.log("slide changed, current=" + event.currentSlide.getAttribute('id'));
+                // console.log("slide changed, current=" + event.currentSlide.getAttribute('id'));
                 
                 // here modify the slide metrics
                 // loading data from a json file (in data subdir)
                 open_bugs = 0;
                 open_bugs_blocker_critical = 0;
                 oldest_update = "";
+                oldest_update_key = "";
                 $.ajax({
                     cache: false,
                     url: '/counters',
@@ -91,20 +107,24 @@
                             else if (key === 'oldest_update') {
                                 oldest_update = val;
                             }
+                            else if (key === 'oldest_update_key') {
+                                oldest_update_key = val;
+                            }
                         });
                         slide = event.currentSlide;
                         slide_id = slide.getAttribute('id');
                         if (slide_id === "open_bugs") {
                             $("#"+slide_id+" h1").html(open_bugs);
-                            console.log($("#"+slide_id+" h1").html());
+                            // console.log($("#"+slide_id+" h1").html());
                         }
                         else if (slide_id === "open_bugs_blocker_critical") {
                             $("#"+slide_id+" h1").html(open_bugs_blocker_critical);
-                            console.log($("#"+slide_id+" h1").html());
+                            // console.log($("#"+slide_id+" h1").html());
                         }
                         else if (slide_id === "oldest_update") {
                             $("#"+slide_id+" h1").html(oldest_update);
-                            console.log($("#"+slide_id+" h1").html());
+                            $("#"+slide_id+" h2").html(oldest_update_key);
+                            // console.log($("#"+slide_id+" h1").html());
                         }
                     }
                 });
