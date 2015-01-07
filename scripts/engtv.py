@@ -49,6 +49,7 @@ def update_counters():
         page_size = 100
         result_count = page_size
         total_open_bugs = 0
+        total_customer_bugs = 0
         oldest_update = "9999-99-99"
         oldest_update_key = ""
         start_at = 0
@@ -72,11 +73,14 @@ def update_counters():
                     if priority not in counter['labels'][label]:
                         counter['labels'][label][priority] = 0
                     counter['labels'][label][priority] += 1
+                    if label == 'customers':
+                        total_customer_bugs += 1
                 updated = issue.fields.updated
                 if str(updated) < oldest_update:
                     oldest_update = str(updated)
                     oldest_update_key = issue.key
         counter["open_bugs"] = total_open_bugs
+        counter["open_bugs_customer"] = total_customer_bugs
         now = datetime.today()
         diff = now - parser.parse(oldest_update[:19])
         counter["last_update_of_counters"] = now 

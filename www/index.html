@@ -28,7 +28,11 @@
             <div class="slides">
                 <section id="open_bugs">
                     <h1>0</h1>
-                    <h3>Open bugs</h3>
+                    <h3>Total open bug(s)</h3>
+                </section>
+                <section id="open_bugs_customer">
+                    <h1>0</h1>
+                    <h3>Customer bug(s)</h3>
                 </section>
                 <section id="open_bugs_blocker_critical">
                     <h1>0</h1>
@@ -87,6 +91,7 @@
                 // here modify the slide metrics
                 // loading data from a json file (in data subdir)
                 open_bugs = 0;
+                open_bugs_customer = 0;
                 open_bugs_blocker_critical = 0;
                 oldest_update = "";
                 oldest_update_key = "";
@@ -100,6 +105,9 @@
                             //console.log(key + ": " + val);
                             if (key === 'open_bugs') {
                                 open_bugs = val;
+                            }
+                            else if (key === 'open_bugs_customer') {
+                                open_bugs_customer = val;
                             }
                             else if (key === 'open_bugs_blocker_critical') {
                                 open_bugs_blocker_critical = val;
@@ -115,6 +123,10 @@
                         slide_id = slide.getAttribute('id');
                         if (slide_id === "open_bugs") {
                             $("#"+slide_id+" h1").html(open_bugs);
+                            // console.log($("#"+slide_id+" h1").html());
+                        }
+                        else if (slide_id === "open_bugs_customer") {
+                            $("#"+slide_id+" h1").html(open_bugs_customer);
                             // console.log($("#"+slide_id+" h1").html());
                         }
                         else if (slide_id === "open_bugs_blocker_critical") {
