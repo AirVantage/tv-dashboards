@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 sudo docker stop engtv
 sudo docker rm engtv
 sudo docker build -t closet:5000/engtv .

@@ -3,10 +3,14 @@ from jira.client import JIRA
 import sys
 from datetime import datetime
 from dateutil import parser
+import requests
+import json
 
 webserver = Flask(__name__)
 jira_login = ""
 jira_password = ""
+github_login = ""
+github_token = ""
 counter = {}
 
 @webserver.route("/login", methods=['GET', 'POST'])
@@ -16,8 +20,12 @@ def login():
     else:
         global jira_login
         global jira_password
+        global github_login
+        global github_token
         jira_login = request.form['jira_login'].strip()
         jira_password = request.form['jira_password'].strip()
+        github_login = request.form['github_login'].strip()
+        github_token = request.form['github_token'].strip()
         log("logged as: " + jira_login)
         return send_file('www/index.html')
 
@@ -42,6 +50,17 @@ def log(message):
 def update_counters():
     global jira_login
     global jira_password
+    global github_login
+    global github_token
+    global counter
+    
+    if github_login != "":
+        BASE_URL = "https://api.github.com/"
+        repos_api_url = BASE_URL + "orgs/AirVantage/issues?filter=all&state=open&labels=bug"
+        response = requests.get(repos_api_url, auth=(github_login, github_token), verify=False)
+        github_open_bugs_count = len(response.json())
+        log("github open bugs: %d" % github_open_bugs_count)
+        counter['github_open_bugs'] = github_open_bugs_count
     if jira_login != "":
         log("About to update counters...")
         jira = JIRA(options = {'server': 'https://issues.sierrawireless.com/', 'verify': False}, basic_auth=(jira_login, jira_password))
@@ -53,7 +72,6 @@ def update_counters():
         oldest_update = "9999-99-99"
         oldest_update_key = ""
         start_at = 0
-        global counter
         counter['labels'] = {}
         counter['total'] = {}
         while result_count == page_size:

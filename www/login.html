@@ -7,15 +7,23 @@
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
   </head>
   <body>
-    <div>Your JIRA credentials</div>
+    <div>Your credentials</div>
     <form action="/login" method="post">
       <div>
-        Username:
+        JIRA login:
         <input type="text" name="jira_login"/>
       </div>
       <div>
-        Password:
+        JIRA password:
         <input type="password" name="jira_password"/>
+      </div>
+      <div>
+        Github login:
+        <input type="text" name="github_login"/>
+      </div>
+      <div>
+        Github token:
+        <input type="password" name="github_token"/>
       </div>
       <div>
         <input type="submit" value="Submit">

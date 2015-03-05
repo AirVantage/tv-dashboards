@@ -43,6 +43,10 @@
                     <h2>PLTBUGS-</h2>
                     <h3>Oldest update</h3>
                 </section>
+                <section id="github_open_bugs" data-background="#222222" data-background-transition="zoom">
+                    <h1>0</h1>
+                    <h3>open bug(s) on Github</h3>
+                </section>
             </div>
         </div>
 
@@ -93,6 +97,7 @@
                 open_bugs = 0;
                 open_bugs_customer = 0;
                 open_bugs_blocker_critical = 0;
+                github_open_bugs = 0;
                 oldest_update = "";
                 oldest_update_key = "";
                 $.ajax({
@@ -118,6 +123,9 @@
                             else if (key === 'oldest_update_key') {
                                 oldest_update_key = val;
                             }
+                            else if (key === 'github_open_bugs') {
+                                github_open_bugs = val;
+                            }
                         });
                         slide = event.currentSlide;
                         slide_id = slide.getAttribute('id');
@@ -136,6 +144,10 @@
                         else if (slide_id === "oldest_update") {
                             $("#"+slide_id+" h1").html(oldest_update);
                             $("#"+slide_id+" h2").html(oldest_update_key);
+                            // console.log($("#"+slide_id+" h1").html());
+                        }
+                        else if (slide_id === "github_open_bugs") {
+                            $("#"+slide_id+" h1").html(github_open_bugs);
                             // console.log($("#"+slide_id+" h1").html());
                         }
                     }
