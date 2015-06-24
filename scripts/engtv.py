@@ -91,7 +91,7 @@ def update_counters():
                     if priority not in counter['labels'][label]:
                         counter['labels'][label][priority] = 0
                     counter['labels'][label][priority] += 1
-                    if label == 'customers':
+                    if label in ['customer', 'customers']:
                         total_customer_bugs += 1
                 updated = issue.fields.updated
                 if str(updated) < oldest_update:
