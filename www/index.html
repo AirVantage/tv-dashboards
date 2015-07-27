@@ -130,6 +130,10 @@
                         slide = event.currentSlide;
                         slide_id = slide.getAttribute('id');
                         if (slide_id === "open_bugs") {
+                            if (open_bugs >= 50) {
+                                event.currentSlide.setAttribute('data-background', '#AA0000');
+                                Reveal.sync();
+                            }
                             $("#"+slide_id+" h1").html(open_bugs);
                             // console.log($("#"+slide_id+" h1").html());
                         }
