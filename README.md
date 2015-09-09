@@ -1,24 +1,39 @@
 TV dashboards
 =============
 
+Build it
+-----
+
+    sudo docker build -t closet:5000/engtv .
+
+Run it
+-----
+
+As a standalone app:
+
+    sudo docker run -d -p 8080:8080 --name="engtv" closet:5000/engtv
+
+With a bash shell:
+
+    sudo docker run -t -i -p 8080:8080 --name="engtv" closet:5000/engtv /bin/bash
+
+Then
+
+    cd /home/engtv
+    ./engtv.sh
+
 Summary
 -------
 
-Theses pages are deployed on the R&D TV
-The main page is teamtv.html that launches other pages cyclically. Two timeslots are dedicated to the display of bug counts during UI and API dailies.
+This dashboard is based on revealjs with dynamic content retrieved and served by a python Flask application running on port 8080.
+A valid access to JIRA is requested as well as an account on Github, thus the login page described below.
 
 Get started
 -----------
 
-1. Deploy these files on an web server directory
-2. Accessing JIRA related dashboards requires an initial successful login on JIRA
-3. Accessing SonarQube related pages requires an initial successful login on SonarQube
-4. Then, from the TV screen, access <your server URI>/teamtv.html, e.g.: [R&D TV](http://zahia.anyware/dashboard/teamtv.html). Note that a blank page is displayed during the first 15 s.
+1. Access http://localhost:8080/login
+2. Enter valid credentials (i.e. able to access the PLTBUGS JIRA project and Github AirVantage reposotories)
+3. Rolling pages should shown total bug counts, blocker and critical bug counts and oldest update amongst open bugs, plus the count of open bugs on Github
+4. Counters shoud be updated automatically every 5 minutes
 
-Scripts
--------
-Python scripts are providing TV web pages with data from JIRA (bug counts) and Stash (Pending pull-requests)
-Required python libs are: `jira-python, pandas, python-dateutil, requests`
-Both scripts import `jira_credentials.py` that MUST contain:
-    jira_login='<YOUR JIRA LOGIN>'
-    jira_password='<YOUR JIRA PASSWORD>'
+One can view detailed counters at http://localhost:8080/counters
