@@ -115,7 +115,15 @@ def update_counters():
             counter["open_bugs_blocker_critical"] += counter['total']['Blocker']
         if counter['total'].has_key('Critical'):
             counter["open_bugs_blocker_critical"] += counter['total']['Critical']
+
+        # retrieve count of opened incidents (hopefully less than 100!)
+        jql = 'project = INCIDENT and status != Closed'
+        issues = jira.search_issues(jql, startAt=0, maxResults=100)
+        incidents = len(issues)
+        counter['incidents'] = incidents
+
         log("counters updated: %d open bugs" % total_open_bugs)
+        log("                  %d incidents" % incidents)
 
 if __name__ == '__main__':
     webserver.config["CACHE_TYPE"] = "null"
