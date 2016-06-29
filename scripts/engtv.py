@@ -5,6 +5,7 @@ from datetime import datetime
 from dateutil import parser
 import requests
 import json
+import urllib3
 
 webserver = Flask(__name__)
 jira_login = ""
@@ -54,17 +55,22 @@ def update_counters():
     global github_token
     global counter
     
+    ca_certs = "/etc/ssl/certs/ca-certificates.crt"
+    http = urllib3.PoolManager(
+        cert_reqs = 'CERT_REQUIRED', # Force certificate check.
+        ca_certs = ca_certs,         # Path to your certificate bundle.
+    )
     if github_login != "":
         BASE_URL = "https://api.github.com/"
         repos_api_url = BASE_URL + "orgs/AirVantage/issues?filter=all&state=open&labels=bug"
-        response = requests.get(repos_api_url, auth=(github_login, github_token), verify=False)
+        response = requests.get(repos_api_url, auth=(github_login, github_token))
         github_open_bugs_count = len(response.json())
         log("github open bugs: %d" % github_open_bugs_count)
         counter['github_open_bugs'] = github_open_bugs_count
     if jira_login != "":
         log("About to update counters...")
-        jira = JIRA(options = {'server': 'https://issues.sierrawireless.com/', 'verify': False}, basic_auth=(jira_login, jira_password))
-        jql = 'project = PLTBUGS AND type = Bug AND status in (Open, Reopened, Incomplete)'
+        jira = JIRA(options = {'server': 'https://issues.sierrawireless.com/'}, basic_auth=(jira_login, jira_password))
+        jql = 'project = PLTBUGS AND type = 1 AND status in (Open, Reopened, Incomplete)'
         page_size = 100
         result_count = page_size
         total_open_bugs = 0
@@ -75,22 +81,22 @@ def update_counters():
         counter['labels'] = {}
         counter['total'] = {}
         while result_count == page_size:
-            issues = jira.search_issues(jql, expand="changelog", fields="priority,labels,updated", startAt=start_at, maxResults=page_size)
+            issues = jira.search_issues(jql, expand="changelog", fields="customfield_11010,labels,updated", startAt=start_at, maxResults=page_size)
             result_count = len(issues)
             start_at += page_size
             total_open_bugs += result_count
             for issue in issues:
-                priority = issue.fields.priority.name
-                if priority not in counter['total']:
-                    counter['total'][priority] = 0
-                counter['total'][priority] += 1
+                severity = issue.fields.customfield_11010.value
+                if severity not in counter['total']:
+                    counter['total'][severity] = 0
+                counter['total'][severity] += 1
                 labels = issue.fields.labels
                 for label in labels:
                     if label not in counter['labels']:
                         counter['labels'][label] = {}
-                    if priority not in counter['labels'][label]:
-                        counter['labels'][label][priority] = 0
-                    counter['labels'][label][priority] += 1
+                    if severity not in counter['labels'][label]:
+                        counter['labels'][label][severity] = 0
+                    counter['labels'][label][severity] += 1
                     if label in ['customer', 'customers']:
                         total_customer_bugs += 1
                 updated = issue.fields.updated
@@ -109,7 +115,15 @@ def update_counters():
             counter["open_bugs_blocker_critical"] += counter['total']['Blocker']
         if counter['total'].has_key('Critical'):
             counter["open_bugs_blocker_critical"] += counter['total']['Critical']
+
+        # retrieve count of opened incidents (hopefully less than 100!)
+        jql = 'project = INCIDENT and status != Closed'
+        issues = jira.search_issues(jql, startAt=0, maxResults=100)
+        incidents = len(issues)
+        counter['incidents'] = incidents
+
         log("counters updated: %d open bugs" % total_open_bugs)
+        log("                  %d incidents" % incidents)
 
 if __name__ == '__main__':
     webserver.config["CACHE_TYPE"] = "null"

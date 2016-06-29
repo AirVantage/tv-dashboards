@@ -38,6 +38,10 @@
                     <h1>0</h1>
                     <h3>Blocker or critical bug(s)</h3>
                 </section>
+                <section id="incidents">
+                    <h1>0</h1>
+                    <h3>Open incident(s)</h3>
+                </section>
                 <section id="oldest_update">
                     <h1>0 day(s)</h1>
                     <h2>PLTBUGS-</h2>
@@ -98,6 +102,7 @@
                 open_bugs_customer = 0;
                 open_bugs_blocker_critical = 0;
                 github_open_bugs = 0;
+                incidents = 0;
                 oldest_update = "";
                 oldest_update_key = "";
                 $.ajax({
@@ -117,6 +122,9 @@
                             else if (key === 'open_bugs_blocker_critical') {
                                 open_bugs_blocker_critical = val;
                             }
+                            else if (key === 'incidents') {
+                                incidents = val;
+                            }
                             else if (key === 'oldest_update') {
                                 oldest_update = val;
                             }
@@ -134,6 +142,18 @@
                                 event.currentSlide.setAttribute('data-background', '#AA0000');
                                 Reveal.sync();
                             }
+                            else if (open_bugs >= 25) {
+                                event.currentSlide.setAttribute('data-background', '#f8a000');
+                                Reveal.sync();
+                            }
+                            else if (open_bugs > 0) {
+                                event.currentSlide.setAttribute('data-background', '#002b36');
+                                Reveal.sync();
+                            }
+                            else {
+                                event.currentSlide.setAttribute('data-background', '#208020');
+                                Reveal.sync();
+                            }
                             $("#"+slide_id+" h1").html(open_bugs);
                             // console.log($("#"+slide_id+" h1").html());
                         }
@@ -143,6 +163,18 @@
                         }
                         else if (slide_id === "open_bugs_blocker_critical") {
                             $("#"+slide_id+" h1").html(open_bugs_blocker_critical);
+                            // console.log($("#"+slide_id+" h1").html());
+                        }
+                        else if (slide_id === "incidents") {
+                            if (incidents > 0) {
+                                event.currentSlide.setAttribute('data-background', '#AA0000');
+                                Reveal.sync();
+                            }
+                            else {
+                                event.currentSlide.setAttribute('data-background', '#208020');
+                                Reveal.sync();
+                            }
+                            $("#"+slide_id+" h1").html(incidents);
                             // console.log($("#"+slide_id+" h1").html());
                         }
                         else if (slide_id === "oldest_update") {

@@ -4,18 +4,18 @@ TV dashboards
 Build it
 -----
 
-    sudo docker build -t closet:5000/engtv .
+    sudo docker build -t airvantage/engtv .
 
 Run it
 -----
 
 As a standalone app:
 
-    sudo docker run -d -p 8080:8080 --name="engtv" closet:5000/engtv
+    sudo docker run -d -p 8080:8080 --name="engtv" airvantage/engtv
 
 With a bash shell:
 
-    sudo docker run -t -i -p 8080:8080 --name="engtv" closet:5000/engtv /bin/bash
+    sudo docker run -t -i -p 8080:8080 --name="engtv" airvantage/engtv /bin/bash
 
 Then
 
@@ -32,8 +32,8 @@ Get started
 -----------
 
 1. Access http://localhost:8080/login
-2. Enter valid credentials (i.e. able to access the PLTBUGS JIRA project and Github AirVantage reposotories)
-3. Rolling pages should shown total bug counts, blocker and critical bug counts and oldest update amongst open bugs, plus the count of open bugs on Github
+2. Enter valid credentials (i.e. able to access the PLTBUGS and INCIDENT JIRA projects and Github AirVantage repositories)
+3. Rolling pages should show total bug counts, blocker and critical bug counts, open incidents and oldest update amongst open bugs, plus the count of open bugs on Github
 4. Counters shoud be updated automatically every 5 minutes
 
 One can view detailed counters at http://localhost:8080/counters
