@@ -4,18 +4,22 @@ TV dashboards
 Build it
 -----
 
-    sudo docker build -t airvantage/engtv .
+    sudo docker build -t airvantage/tv-dashboards .
 
 Run it
 -----
 
 As a standalone app:
 
-    sudo docker run -d -p 8080:8080 --name="engtv" airvantage/engtv
+    sudo docker run -d -p 8080:8080 --name="engtv" airvantage/tv-dashboards
 
-With a bash shell:
+If docker version is >= 1.11, one can also limit the log file size and number:
 
-    sudo docker run -t -i -p 8080:8080 --name="engtv" airvantage/engtv /bin/bash
+    sudo docker run -d --log-driver=json-file --log-opt max-size=10m --log-opt max-file=10 -p 8080:8080 --name="engtv" airvantage/tv-dashboards
+
+And with a bash shell:
+
+    sudo docker run -t -i -p 8080:8080 --name="engtv" airvantage/tv-dashboards /bin/bash
 
 Then
 
