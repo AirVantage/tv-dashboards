@@ -34,9 +34,9 @@
                     <h1>0</h1>
                     <h3>Customer bug(s)</h3>
                 </section>
-                <section id="open_bugs_blocker_critical">
+                <section id="open_bugs_top_high">
                     <h1>0</h1>
-                    <h3>Blocker or critical bug(s)</h3>
+                    <h3>Top or High priority bug(s)</h3>
                 </section>
                 <section id="incidents">
                     <h1>0</h1>
@@ -68,7 +68,7 @@
                 history: false,
                 center: true,
                 loop: true,
-                autoSlide: 5000,
+                autoSlide: 5000,  // slide display duration in ms
                 overview: false,
 
                 theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
@@ -82,9 +82,8 @@
 
             Reveal.addEventListener('slidechanged', function(event) {
                 loop_count++;
-                // update every 60 loops of 5000 ms = every 5 minutes
+                // update data every 60 loops of 5000 ms = every 5 minutes
                 if (loop_count % 60 === 0) {
-                    // console.log("slide changed, no update"); 
                     $.ajax({
                         cache: false,
                         url: '/update'
@@ -92,15 +91,11 @@
                     loop_count = 0;
                     return;
                 }
-                // console.log("slide changed, update needed"); 
-                // event.previousSlide, event.currentSlide, event.indexh, event.indexv
-                // console.log("slide changed, current=" + event.currentSlide.getAttribute('id'));
-                
-                // here modify the slide metrics
-                // loading data from a json file (in data subdir)
+
+                // here update the slide metrics loading data from a json file (in data subdir)
                 open_bugs = 0;
                 open_bugs_customer = 0;
-                open_bugs_blocker_critical = 0;
+                open_bugs_top_high = 0;
                 github_open_bugs = 0;
                 incidents = 0;
                 oldest_update = "";
@@ -110,17 +105,15 @@
                     url: '/counters',
                     datatype: 'json',
                     success: function(data) {
-                        //console.log(data["open_bugs"] + " - " + data["oldest_update"]);
                         $.each(data, function(key, val) {
-                            //console.log(key + ": " + val);
                             if (key === 'open_bugs') {
                                 open_bugs = val;
                             }
                             else if (key === 'open_bugs_customer') {
                                 open_bugs_customer = val;
                             }
-                            else if (key === 'open_bugs_blocker_critical') {
-                                open_bugs_blocker_critical = val;
+                            else if (key === 'open_bugs_top_high') {
+                                open_bugs_top_high = val;
                             }
                             else if (key === 'incidents') {
                                 incidents = val;
@@ -155,15 +148,12 @@
                                 Reveal.sync();
                             }
                             $("#"+slide_id+" h1").html(open_bugs);
-                            // console.log($("#"+slide_id+" h1").html());
                         }
                         else if (slide_id === "open_bugs_customer") {
                             $("#"+slide_id+" h1").html(open_bugs_customer);
-                            // console.log($("#"+slide_id+" h1").html());
                         }
-                        else if (slide_id === "open_bugs_blocker_critical") {
-                            $("#"+slide_id+" h1").html(open_bugs_blocker_critical);
-                            // console.log($("#"+slide_id+" h1").html());
+                        else if (slide_id === "open_bugs_top_high") {
+                            $("#"+slide_id+" h1").html(open_bugs_top_high);
                         }
                         else if (slide_id === "incidents") {
                             if (incidents > 0) {
@@ -175,16 +165,13 @@
                                 Reveal.sync();
                             }
                             $("#"+slide_id+" h1").html(incidents);
-                            // console.log($("#"+slide_id+" h1").html());
                         }
                         else if (slide_id === "oldest_update") {
                             $("#"+slide_id+" h1").html(oldest_update);
                             $("#"+slide_id+" h2").html(oldest_update_key);
-                            // console.log($("#"+slide_id+" h1").html());
                         }
                         else if (slide_id === "github_open_bugs") {
                             $("#"+slide_id+" h1").html(github_open_bugs);
-                            // console.log($("#"+slide_id+" h1").html());
                         }
                     }
                 });
