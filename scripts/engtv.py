@@ -34,7 +34,7 @@ def login():
 def index():
     return send_file('www/index.html')
 
-@webserver.route("/counters")
+@webserver.route("/metrics")
 def counters():
     global counter
     return jsonify(counter)
