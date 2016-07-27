@@ -81,22 +81,22 @@ def update_counters():
         counter['labels'] = {}
         counter['total'] = {}
         while result_count == page_size:
-            issues = jira.search_issues(jql, expand="changelog", fields="customfield_11010,labels,updated", startAt=start_at, maxResults=page_size)
+            issues = jira.search_issues(jql, expand="changelog", fields="priority,labels,updated", startAt=start_at, maxResults=page_size)
             result_count = len(issues)
             start_at += page_size
             total_open_bugs += result_count
             for issue in issues:
-                severity = issue.fields.customfield_11010.value
-                if severity not in counter['total']:
-                    counter['total'][severity] = 0
-                counter['total'][severity] += 1
+                priority = issue.fields.priority.name
+                if priority not in counter['total']:
+                    counter['total'][priority] = 0
+                counter['total'][priority] += 1
                 labels = issue.fields.labels
                 for label in labels:
                     if label not in counter['labels']:
                         counter['labels'][label] = {}
-                    if severity not in counter['labels'][label]:
-                        counter['labels'][label][severity] = 0
-                    counter['labels'][label][severity] += 1
+                    if priority not in counter['labels'][label]:
+                        counter['labels'][label][priority] = 0
+                    counter['labels'][label][priority] += 1
                     if label in ['customer', 'customers']:
                         total_customer_bugs += 1
                 updated = issue.fields.updated
@@ -110,11 +110,11 @@ def update_counters():
         counter["last_update_of_counters"] = now 
         counter["oldest_update"] = str(diff.days) + " days" 
         counter["oldest_update_key"] = oldest_update_key 
-        counter["open_bugs_blocker_critical"] = 0
-        if counter['total'].has_key('Blocker'):
-            counter["open_bugs_blocker_critical"] += counter['total']['Blocker']
-        if counter['total'].has_key('Critical'):
-            counter["open_bugs_blocker_critical"] += counter['total']['Critical']
+        counter["open_bugs_top_high"] = 0
+        if counter['total'].has_key('0-Top'):
+            counter["open_bugs_top_high"] += counter['total']['0-Top']
+        if counter['total'].has_key('1-High'):
+            counter["open_bugs_top_high"] += counter['total']['1-High']
 
         # retrieve count of opened incidents (hopefully less than 100!)
         jql = 'project = INCIDENT and status != Closed'
