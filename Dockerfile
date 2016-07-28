@@ -4,7 +4,7 @@ MAINTAINER prieux@sierrawireless.com
 # Install
 RUN \
     apt-get update && \
-    apt-get install -y python-pip wget git vim unzip python-dev openssl ca-certificates && \
+    apt-get install --fix-missing -y python-pip wget git vim unzip python-dev openssl ca-certificates && \
     pip install --upgrade ipython python-dateutil pytz jira jinja2 tornado Flask requests && \
     cd /usr/local/share/ca-certificates/ && wget http://ca.anyware-tech.com/anyware-tech.crt && \
     update-ca-certificates && \

@@ -34,9 +34,9 @@
                     <h1>0</h1>
                     <h3>Customer bug(s)</h3>
                 </section>
-                <section id="open_bugs_blocker_critical">
+                <section id="open_bugs_top_high">
                     <h1>0</h1>
-                    <h3>Blocker or critical bug(s)</h3>
+                    <h3>Top or High priority bug(s)</h3>
                 </section>
                 <section id="incidents">
                     <h1>0</h1>
@@ -59,6 +59,23 @@
 
         <script>
             var loop_count = 0;
+            var metrics = {
+                'open_bugs': 0,
+                'open_bugs_customer': 0,
+                'open_bugs_top_high': 0,
+                'github_open_bugs': 0,
+                'incidents': 0,
+                'oldest_update': "",
+                'oldest_update_key': ""
+            };
+            var updateSlide = {
+                'open_bugs':          function(event) { updateOpenBugsSlide('open_bugs', event) },
+                'open_bugs_customer': function(event) { genericUpdate('open_bugs_customer') },
+                'open_bugs_top_high': function(event) { genericUpdate('open_bugs_top_high') },
+                'github_open_bugs':   function(event) { genericUpdate('github_open_bugs') },
+                'incidents':          function(event) { updateIncidentsSlide('incidents', event) },
+                'oldest_update':      function(event) { updateOldestUpdateSlide('oldest_update', event) }
+            };
 
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
@@ -68,23 +85,20 @@
                 history: false,
                 center: true,
                 loop: true,
-                autoSlide: 5000,
+                autoSlide: 5000,  // slide display duration in ms
                 overview: false,
-
                 theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
                 transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
-
-                // Optional libraries used to extend on reveal.js
-                dependencies: [
-                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
-                ]
             });
 
             Reveal.addEventListener('slidechanged', function(event) {
+                updateMetricsEvery5Minutes();
+                getMetricsAndUpdateSlides(event);
+            });
+
+            function updateMetricsEvery5Minutes() {
                 loop_count++;
-                // update every 60 loops of 5000 ms = every 5 minutes
                 if (loop_count % 60 === 0) {
-                    // console.log("slide changed, no update"); 
                     $.ajax({
                         cache: false,
                         url: '/update'
@@ -92,103 +106,50 @@
                     loop_count = 0;
                     return;
                 }
-                // console.log("slide changed, update needed"); 
-                // event.previousSlide, event.currentSlide, event.indexh, event.indexv
-                // console.log("slide changed, current=" + event.currentSlide.getAttribute('id'));
-                
-                // here modify the slide metrics
-                // loading data from a json file (in data subdir)
-                open_bugs = 0;
-                open_bugs_customer = 0;
-                open_bugs_blocker_critical = 0;
-                github_open_bugs = 0;
-                incidents = 0;
-                oldest_update = "";
-                oldest_update_key = "";
+            }
+
+            function getMetricsAndUpdateSlides(event) {
                 $.ajax({
                     cache: false,
-                    url: '/counters',
+                    url: '/metrics',
                     datatype: 'json',
                     success: function(data) {
-                        //console.log(data["open_bugs"] + " - " + data["oldest_update"]);
                         $.each(data, function(key, val) {
-                            //console.log(key + ": " + val);
-                            if (key === 'open_bugs') {
-                                open_bugs = val;
-                            }
-                            else if (key === 'open_bugs_customer') {
-                                open_bugs_customer = val;
-                            }
-                            else if (key === 'open_bugs_blocker_critical') {
-                                open_bugs_blocker_critical = val;
-                            }
-                            else if (key === 'incidents') {
-                                incidents = val;
-                            }
-                            else if (key === 'oldest_update') {
-                                oldest_update = val;
-                            }
-                            else if (key === 'oldest_update_key') {
-                                oldest_update_key = val;
-                            }
-                            else if (key === 'github_open_bugs') {
-                                github_open_bugs = val;
-                            }
+                            metrics[key] = val;
                         });
-                        slide = event.currentSlide;
-                        slide_id = slide.getAttribute('id');
-                        if (slide_id === "open_bugs") {
-                            if (open_bugs >= 50) {
-                                event.currentSlide.setAttribute('data-background', '#AA0000');
-                                Reveal.sync();
-                            }
-                            else if (open_bugs >= 25) {
-                                event.currentSlide.setAttribute('data-background', '#f8a000');
-                                Reveal.sync();
-                            }
-                            else if (open_bugs > 0) {
-                                event.currentSlide.setAttribute('data-background', '#002b36');
-                                Reveal.sync();
-                            }
-                            else {
-                                event.currentSlide.setAttribute('data-background', '#208020');
-                                Reveal.sync();
-                            }
-                            $("#"+slide_id+" h1").html(open_bugs);
-                            // console.log($("#"+slide_id+" h1").html());
-                        }
-                        else if (slide_id === "open_bugs_customer") {
-                            $("#"+slide_id+" h1").html(open_bugs_customer);
-                            // console.log($("#"+slide_id+" h1").html());
-                        }
-                        else if (slide_id === "open_bugs_blocker_critical") {
-                            $("#"+slide_id+" h1").html(open_bugs_blocker_critical);
-                            // console.log($("#"+slide_id+" h1").html());
-                        }
-                        else if (slide_id === "incidents") {
-                            if (incidents > 0) {
-                                event.currentSlide.setAttribute('data-background', '#AA0000');
-                                Reveal.sync();
-                            }
-                            else {
-                                event.currentSlide.setAttribute('data-background', '#208020');
-                                Reveal.sync();
-                            }
-                            $("#"+slide_id+" h1").html(incidents);
-                            // console.log($("#"+slide_id+" h1").html());
-                        }
-                        else if (slide_id === "oldest_update") {
-                            $("#"+slide_id+" h1").html(oldest_update);
-                            $("#"+slide_id+" h2").html(oldest_update_key);
-                            // console.log($("#"+slide_id+" h1").html());
-                        }
-                        else if (slide_id === "github_open_bugs") {
-                            $("#"+slide_id+" h1").html(github_open_bugs);
-                            // console.log($("#"+slide_id+" h1").html());
-                        }
+                        updateSlide[event.currentSlide.getAttribute('id')](event);
                     }
                 });
-            });
+            }
+
+            function updateOpenBugsSlide(slideId, event) {
+                if (metrics['open_bugs'] >= 50)      { backgroundColor = '#AA0000'; }
+                else if (metrics['open_bugs'] >= 25) { backgroundColor = '#f8a000'; }
+                else if (metrics['open_bugs'] > 0)   { backgroundColor = '#002b36'; }
+                else                                 { backgroundColor = '#208020'; }
+                setBackgroundAndUpdateSlide('open_bugs', event);
+            }
+
+            function updateIncidentsSlide(slideId, event) {
+                if (incidents > 0) { backgroundColor = '#AA0000'; }
+                else               { backgroundColor = '#208020'; }
+                setBackgroundAndUpdateSlide('incidents', event);
+            }
+
+            function setBackgroundAndUpdateSlide(slideId, event) {
+                event.currentSlide.setAttribute('data-background', backgroundColor);
+                Reveal.sync();
+                genericUpdate(slideId);
+            }
+
+            function updateOldestUpdateSlide(slideId, event) {
+                $("#"+slideId+" h1").html(metrics['oldest_update']);
+                $("#"+slideId+" h2").html(metrics['oldest_update_key']);
+            }
+
+            function genericUpdate(slideId) {
+                $("#"+slideId+" h1").html(metrics[slideId]);
+            }
         </script>
     </body>
 </html>
