@@ -59,7 +59,23 @@
 
         <script>
             var loop_count = 0;
-            var metrics = new Array();
+            var metrics = {
+                'open_bugs': 0,
+                'open_bugs_customer': 0,
+                'open_bugs_top_high': 0,
+                'github_open_bugs': 0,
+                'incidents': 0,
+                'oldest_update': "",
+                'oldest_update_key': ""
+            };
+            var updateSlide = {
+                'open_bugs':          function(event) { updateOpenBugsSlide('open_bugs', event) },
+                'open_bugs_customer': function(event) { genericUpdate('open_bugs_customer') },
+                'open_bugs_top_high': function(event) { genericUpdate('open_bugs_top_high') },
+                'github_open_bugs':   function(event) { genericUpdate('github_open_bugs') },
+                'incidents':          function(event) { updateIncidentsSlide('incidents', event) },
+                'oldest_update':      function(event) { updateOldestUpdateSlide('oldest_update', event) }
+            };
 
             // Full list of configuration options available here:
             // https://github.com/hakimel/reveal.js#configuration
@@ -71,18 +87,16 @@
                 loop: true,
                 autoSlide: 5000,  // slide display duration in ms
                 overview: false,
-
                 theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
                 transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
             });
 
             Reveal.addEventListener('slidechanged', function(event) {
-                reloadValuesEvery5Minutes();
-                initMetrics();
+                updateMetricsEvery5Minutes();
                 getMetricsAndUpdateSlides(event);
             });
 
-            function reloadValuesEvery5Minutes() {
+            function updateMetricsEvery5Minutes() {
                 loop_count++;
                 if (loop_count % 60 === 0) {
                     $.ajax({
@@ -94,16 +108,6 @@
                 }
             }
 
-            function initMetrics() {
-                metrics['open_bugs'] = 0;
-                metrics['open_bugs_customer'] = 0;
-                metrics['open_bugs_top_high'] = 0;
-                metrics['github_open_bugs'] = 0;
-                metrics['incidents'] = 0;
-                metrics['oldest_update'] = "";
-                metrics['oldest_update_key'] = "";
-            }
-
             function getMetricsAndUpdateSlides(event) {
                 $.ajax({
                     cache: false,
@@ -113,57 +117,39 @@
                         $.each(data, function(key, val) {
                             metrics[key] = val;
                         });
-                        updateSlides(event, event.currentSlide.getAttribute('id'));
+                        updateSlide[event.currentSlide.getAttribute('id')](event);
                     }
                 });
             }
 
-            function updateSlides(event, slideId) {
-                if (slideId === "open_bugs") {
-                    if (metrics['open_bugs'] >= 50) {
-                        event.currentSlide.setAttribute('data-background', '#AA0000');
-                        Reveal.sync();
-                    }
-                    else if (metrics['open_bugs'] >= 25) {
-                        event.currentSlide.setAttribute('data-background', '#f8a000');
-                        Reveal.sync();
-                    }
-                    else if (metrics['open_bugs'] > 0) {
-                        event.currentSlide.setAttribute('data-background', '#002b36');
-                        Reveal.sync();
-                    }
-                    else {
-                        event.currentSlide.setAttribute('data-background', '#208020');
-                        Reveal.sync();
-                    }
-                    $("#"+slideId+" h1").html(metrics['open_bugs']);
-                }
-                else if (slideId === "open_bugs_customer") {
-                    $("#"+slideId+" h1").html(metrics['open_bugs_customer']);
-                }
-                else if (slideId === "open_bugs_top_high") {
-                    $("#"+slideId+" h1").html(metrics['open_bugs_top_high']);
-                }
-                else if (slideId === "incidents") {
-                    if (incidents > 0) {
-                        event.currentSlide.setAttribute('data-background', '#AA0000');
-                        Reveal.sync();
-                    }
-                    else {
-                        event.currentSlide.setAttribute('data-background', '#208020');
-                        Reveal.sync();
-                    }
-                    $("#"+slideId+" h1").html(metrics['incidents']);
-                }
-                else if (slideId === "oldest_update") {
-                    $("#"+slideId+" h1").html(metrics['oldest_update']);
-                    $("#"+slideId+" h2").html(metrics['oldest_update_key']);
-                }
-                else if (slideId === "github_open_bugs") {
-                    $("#"+slideId+" h1").html(metrics['github_open_bugs']);
-                }
+            function updateOpenBugsSlide(slideId, event) {
+                if (metrics['open_bugs'] >= 50)      { backgroundColor = '#AA0000'; }
+                else if (metrics['open_bugs'] >= 25) { backgroundColor = '#f8a000'; }
+                else if (metrics['open_bugs'] > 0)   { backgroundColor = '#002b36'; }
+                else                                 { backgroundColor = '#208020'; }
+                setBackgroundAndUpdateSlide('open_bugs', event);
             }
 
+            function updateIncidentsSlide(slideId, event) {
+                if (incidents > 0) { backgroundColor = '#AA0000'; }
+                else               { backgroundColor = '#208020'; }
+                setBackgroundAndUpdateSlide('incidents', event);
+            }
+
+            function setBackgroundAndUpdateSlide(slideId, event) {
+                event.currentSlide.setAttribute('data-background', backgroundColor);
+                Reveal.sync();
+                genericUpdate(slideId);
+            }
+
+            function updateOldestUpdateSlide(slideId, event) {
+                $("#"+slideId+" h1").html(metrics['oldest_update']);
+                $("#"+slideId+" h2").html(metrics['oldest_update_key']);
+            }
+
+            function genericUpdate(slideId) {
+                $("#"+slideId+" h1").html(metrics[slideId]);
+            }
         </script>
     </body>
 </html>
