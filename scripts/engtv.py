@@ -70,7 +70,7 @@ def update_counters():
     if jira_login != "":
         log("About to update counters...")
         jira = JIRA(options = {'server': 'https://issues.sierrawireless.com/'}, basic_auth=(jira_login, jira_password))
-        jql = 'project = PLTBUGS AND type = 1 AND status in (Open, Reopened, Incomplete)'
+        jql = 'project = PLTBUGS AND type = 1 AND status in (Open, Incomplete, "In development", "In Review")'
         page_size = 100
         result_count = page_size
         total_open_bugs = 0
