@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 cd /home/engtv
 python engtv.py

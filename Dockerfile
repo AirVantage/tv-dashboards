@@ -1,17 +1,12 @@
-FROM bitnami/minideb:jessie
+FROM python:2.7-alpine
 MAINTAINER prieux@sierrawireless.com
 
 
 # Install
 RUN \
-    install_packages wget python openssl ca-certificates && \
-    wget https://bootstrap.pypa.io/get-pip.py && \
-    python ./get-pip.py && \
-    install_packages python-pip && \
-    pip install python-dateutil pytz jira jinja2 tornado Flask requests && \
-    cd /usr/local/share/ca-certificates/ && wget http://ca.anyware-tech.com/anyware-tech.crt && \
-    update-ca-certificates && \
-    useradd engtv -U -s /bin/false && \
+    pip install urllib3 python-dateutil pytz jira jinja2 tornado Flask requests && \
+    addgroup -S engtv && \
+    adduser -S -g engtv engtv && \
     mkdir -p /home/engtv/static/ && \
     mkdir -p /home/engtv/www
 #
