@@ -4,7 +4,10 @@ TV dashboards
 Build it
 -----
 
-    sudo docker build -t airvantage/tv-dashboards .
+    # Image based on minideb:
+    sudo docker build -t airvantage/tv-dashboards -f Dockerfile.minideb .
+    # or based on alpine (default):
+    sudo docker build -t airvantage/tv-dashboards -f Dockerfile .
 
 Run it
 -----

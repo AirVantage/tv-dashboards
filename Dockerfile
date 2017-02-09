@@ -1,14 +1,12 @@
-FROM debian:latest
+FROM python:2.7-alpine
 MAINTAINER prieux@sierrawireless.com
+
 
 # Install
 RUN \
-    apt-get update && \
-    apt-get install --fix-missing -y python-pip wget git vim unzip python-dev openssl ca-certificates && \
-    pip install --upgrade ipython python-dateutil pytz jira jinja2 tornado Flask requests && \
-    cd /usr/local/share/ca-certificates/ && wget http://ca.anyware-tech.com/anyware-tech.crt && \
-    update-ca-certificates && \
-    useradd engtv -U -s /bin/false && \
+    pip install urllib3 python-dateutil pytz jira jinja2 tornado Flask requests && \
+    addgroup -S engtv && \
+    adduser -S -g engtv engtv && \
     mkdir -p /home/engtv/static/ && \
     mkdir -p /home/engtv/www
 #
